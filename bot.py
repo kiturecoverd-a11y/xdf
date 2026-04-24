@@ -10,6 +10,9 @@ import asyncio
 import logging
 from datetime import datetime
 
+# CREATE DATA DIRECTORY BEFORE LOGGING
+os.makedirs("data", exist_ok=True)
+
 import discord
 from discord.ext import commands, tasks
 
@@ -121,7 +124,6 @@ class ApexGuard(commands.Bot):
 
 # ─── Entry Point ───────────────────────────────────────────────────────────────
 if __name__ == "__main__":
-    os.makedirs("data", exist_ok=True)
     bot = ApexGuard()
     try:
         bot.run(BotConfig.TOKEN, reconnect=True)
