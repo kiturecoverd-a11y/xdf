@@ -1,14 +1,6 @@
 """
 ╔══════════════════════════════════════════════════════════════════════════════╗
-║            █████╗ ██████╗ ███████╗██╗  ██╗      ██████╗ ██╗   ██╗ █████╗ ██████╗ ██████╗  ║
-║           ██╔══██╗██╔══██╗██╔════╝╚██╗██╔╝      ██╔════╝ ██║   ██║██╔══██╗██╔══██╗██╔══██╗ ║
-║           ███████║██████╔╝█████╗   ╚███╔╝       ██║  ███╗██║   ██║███████║██████╔╝██║  ██║ ║
-║           ██╔══██║██╔═══╝ ██╔══╝   ██╔██╗       ██║   ██║██║   ██║██╔══██║██╔══██╗██║  ██║ ║
-║           ██║  ██║██║     ███████╗██╔╝ ██╗      ╚██████╔╝╚██████╔╝██║  ██║██║  ██║██████╔╝ ║
-║           ╚═╝  ╚═╝╚═╝     ╚══════╝╚═╝  ╚═╝       ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝  ║
-╠══════════════════════════════════════════════════════════════════════════════╣
-║              A P E X   G U A R D   —   H I G H - E N D   S E C U R I T Y     ║
-║                     Professional · Feature-Loaded · Deadly                     ║
+║            A P E X   G U A R D   —   H I G H - E N D   S E C U R I T Y       ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 """
 
@@ -54,7 +46,7 @@ class ApexGuard(commands.Bot):
             intents=intents,
             case_insensitive=True,
             owner_ids=set(BotConfig.OWNER_IDS),
-            help_command=None,  # Custom help
+            help_command=None,
             status=discord.Status.dnd,
             activity=discord.Activity(
                 type=discord.ActivityType.watching,
@@ -71,7 +63,6 @@ class ApexGuard(commands.Bot):
         await self.db.init()
         logger.info("Database initialized.")
 
-        # Load cogs
         cogs = [
             "cogs.automod",
             "cogs.moderation",
@@ -79,7 +70,8 @@ class ApexGuard(commands.Bot):
             "cogs.lockdown",
             "cogs.logging",
             "cogs.backup",
-            "cogs.owner"
+            "cogs.owner",
+            "cogs.antinuke"
         ]
         for cog in cogs:
             try:
@@ -88,7 +80,6 @@ class ApexGuard(commands.Bot):
             except Exception as e:
                 logger.error(f"Failed to load {cog}: {e}")
 
-        # Start background tasks
         self.purge_old_messages.start()
         self.presence_monitor.start()
 
@@ -99,7 +90,6 @@ class ApexGuard(commands.Bot):
 
     async def on_guild_join(self, guild: discord.Guild):
         logger.info(f"Joined guild: {guild.name} ({guild.id})")
-        # Auto-setup defaults
         await self.db.set_guild_setting(guild.id, "security_level", SecurityLevel.NORMAL)
 
     async def on_command_error(self, ctx: commands.Context, error):
@@ -122,8 +112,6 @@ class ApexGuard(commands.Bot):
 
     @tasks.loop(minutes=1)
     async def presence_monitor(self):
-        """Monitor for mass offline/online events (indicative of bot raids)."""
-        # Placeholder for advanced presence heuristics
         pass
 
     async def close(self):
