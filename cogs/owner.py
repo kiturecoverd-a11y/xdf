@@ -93,6 +93,36 @@ class Owner(commands.Cog):
         except Exception as e:
             await ctx.reply(f"❌ Error: {e}", delete_after=5)
 
+    @commands.command(name="addowner")
+    @commands.is_owner()
+    async def addowner_cmd(self, ctx: commands.Context, user_id: int):
+        """Dynamically add another bot owner without restarting."""
+        if user_id not in self.bot.owner_ids:
+            self.bot.owner_ids.add(user_id)
+            await ctx.send(f"✅ User `{user_id}` added as owner.")
+        else:
+            await ctx.reply("User is already an owner.", delete_after=5)
+
+    @commands.command(name="removeowner")
+    @commands.is_owner()
+    async def removeowner_cmd(self, ctx: commands.Context, user_id: int):
+        """Dynamically remove a bot owner without restarting."""
+        if user_id in self.bot.owner_ids:
+            self.bot.owner_ids.remove(user_id)
+            await ctx.send(f"✅ User `{user_id}` removed from owners.")
+        else:
+            await ctx.reply("User is not an owner.", delete_after=5)
+
+    @commands.command(name="owners")
+    async def owners_cmd(self, ctx: commands.Context):
+        """List all active bot owners."""
+        lines = []
+        for uid in sorted(self.bot.owner_ids):
+            user = self.bot.get_user(uid)
+            lines.append(f"• `{uid}` — {f'{user} `{user.name}`' if user else 'Unknown User'}")
+        embed = discord.Embed(title="🔒 Bot Owners", color=0x3498db, description="\n".join(lines))
+        await ctx.send(embed=embed)
+
     @commands.command(name="shutdown")
     @commands.is_owner()
     async def shutdown_cmd(self, ctx: commands.Context):
