@@ -117,9 +117,14 @@ class ApexGuard(commands.Bot):
     async def presence_monitor(self):
         pass
 
+    async def is_owner(self, user: discord.abc.User) -> bool:
+        """Override discord.py's default owner check to use our custom owner_ids set."""
+        return user.id in self.owner_ids
+
     async def close(self):
         logger.info("Shutting down APEX GUARD...")
         await super().close()
+```
 
 
 # ─── Entry Point ───────────────────────────────────────────────────────────────
